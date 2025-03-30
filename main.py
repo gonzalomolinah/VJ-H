@@ -2,10 +2,21 @@
 Hola este es modulo principal,
 el codigo que al ejecutar pondra en marcha nuestro juego
 """
+import pygame
 import scenes.game as GameScene
 import scenes.death as dt
+from scenes.inicio import start_screen  # Importamos la pantalla de inicio
 
-'''Inicio la escena de mi juego'''
-GameScene.gameLoop()
-print("aaaaa")
+# Inicializamos pygame
+pygame.init()
+
+# Configuramos la pantalla
+SCREEN_WIDTH = 1000
+SCREEN_HEIGHT = 700
+screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+
+# Mostramos la pantalla de inicio antes de iniciar el juego
+start_screen(screen, GameScene.gameLoop)
+
+# Si el juego termina, mostramos la pantalla de muerte
 dt.morido()
