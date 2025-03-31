@@ -13,17 +13,13 @@ if __name__ == "__main__": # Solo para que no ejecutes este archivo
 
 import pygame
 
-from pygame.locals import (K_ESCAPE, KEYDOWN, QUIT,K_m)
+from pygame.locals import (K_ESCAPE, KEYDOWN, QUIT)
 
 from elements.jorge import Player
 
 from elements.bug import Enemy
 
 import time
-
-from scenes.pause import pause_screen
-
-#from scenes.start import start_menu
 
 def gameLoop():
     ''' iniciamos los modulos de pygame'''
@@ -44,7 +40,6 @@ def gameLoop():
     pygame.mouse.set_visible(False)
     cursor_img_rect = cursor_img.get_rect()
 
-    #mostrar mmenu de inicio
     ''' Preparamos el gameloop '''
     ''' 1.- creamos el reloj del juego'''
 
@@ -69,6 +64,8 @@ def gameLoop():
     lastShoot = time.time()
     # loop principal del juego
 
+    score = 0
+
     while running:
 
         screen.blit(background_image, [0, 0])
@@ -76,6 +73,10 @@ def gameLoop():
         
         cursor_img_rect.center = pygame.mouse.get_pos()  # update position 
         screen.blit(cursor_img, cursor_img_rect) # draw the cursor
+
+        score_font = pygame.font.SysFont('arial', 20)
+        score_text = score_font.render(f'Score: {round(score)}', True, (255, 255, 255))
+        screen.blit(score_text, (10, 10))
         
         for entity in all_sprites:
             screen.blit(entity.surf, entity.rect)
@@ -85,6 +86,8 @@ def gameLoop():
             screen.blit(projectile.surf, projectile.rect)
         
         # POR HACER (2.5): Eliminar bug si colisiona con proyectil
+        collisions = pygame.sprite.groupcollide(player.projectiles, enemies, True, True)
+        score += 5 * len(collisions)
         pygame.sprite.groupcollide(player.projectiles, enemies, True, True)
         
         pressed_keys = pygame.key.get_pressed()
@@ -103,10 +106,8 @@ def gameLoop():
             # se presiono una tecla?
             if event.type == KEYDOWN:
                 # era la tecla de escape? -> entonces terminamos
-                if event.key == K_m:
-                    pygame.mouse.set_visible(True)
-                    pause_screen(screen)
-                    pygame.mouse.set_visible(False)
+                if event.key == K_ESCAPE:
+                    running = False
 
             # fue un click al cierre de la ventana? -> entonces terminamos
             elif event.type == QUIT:
@@ -124,5 +125,7 @@ def gameLoop():
                     lastShoot = time.time()
         
 
-
+        score += 0.1
         clock.tick(40)
+    # quit()
+        
