@@ -69,6 +69,8 @@ def gameLoop():
     lastShoot = time.time()
     # loop principal del juego
 
+    score = 0
+
     while running:
 
         screen.blit(background_image, [0, 0])
@@ -76,6 +78,10 @@ def gameLoop():
         
         cursor_img_rect.center = pygame.mouse.get_pos()  # update position 
         screen.blit(cursor_img, cursor_img_rect) # draw the cursor
+
+        score_font = pygame.font.SysFont('arial', 20)
+        score_text = score_font.render(f'Score: {round(score)}', True, (255, 255, 255))
+        screen.blit(score_text, (10, 10))
         
         for entity in all_sprites:
             screen.blit(entity.surf, entity.rect)
@@ -85,6 +91,8 @@ def gameLoop():
             screen.blit(projectile.surf, projectile.rect)
         
         # POR HACER (2.5): Eliminar bug si colisiona con proyectil
+        collisions = pygame.sprite.groupcollide(player.projectiles, enemies, True, True)
+        score += 5 * len(collisions)
         pygame.sprite.groupcollide(player.projectiles, enemies, True, True)
         
         pressed_keys = pygame.key.get_pressed()
@@ -124,5 +132,5 @@ def gameLoop():
                     lastShoot = time.time()
         
 
-
+        score += 0.1
         clock.tick(40)
