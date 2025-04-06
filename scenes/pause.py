@@ -19,6 +19,10 @@ def pause_screen(screen):
     exit_rect = exit_text.get_rect(center=(screen.get_width()//2 + spacing, base_y))
     
     running = True
+    pygame.mixer.music.load("assets/pause_music.wav")
+    pygame.mixer.music.set_volume(0.3)
+    pygame.mixer.music.play(-1)
+
     while running:
         screen.blit(background_image, (0, 0))
         mouse_pos = pygame.mouse.get_pos()
@@ -49,6 +53,7 @@ def pause_screen(screen):
                     exit()
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if resume_rect.collidepoint(event.pos):
+                    pygame.mixer.music.stop()
                     running = False  # Resume the game
                     pygame.mouse.set_visible(False)
                 elif exit_rect.collidepoint(event.pos):

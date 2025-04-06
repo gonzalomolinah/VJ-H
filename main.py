@@ -1,6 +1,6 @@
 """
 Hola este es modulo principal,
-el codigo que al ejecutar pondra en marcha nuestro juego
+el codigo que al ejecutar pondra en marchas nuestro juego
 """
 import pygame
 import scenes.game as GameScene
@@ -8,8 +8,9 @@ import scenes.death as dt
 from scenes.inicio import start_screen  # Importamos la pantalla de inicio
 
 # Inicializamos pygame
+pygame.mixer.pre_init(44100, -16, 2, 512)
 pygame.init()
-
+pygame.mixer.init()
 # Configuramos la pantalla
 SCREEN_WIDTH = 1000
 SCREEN_HEIGHT = 700

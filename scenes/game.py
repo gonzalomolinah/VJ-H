@@ -62,6 +62,13 @@ def gameLoop():
     all_sprites = pygame.sprite.Group()
     all_sprites.add(player)
 
+
+    shoot_sound = pygame.mixer.Sound("assets/shoot.wav")
+    bug_death_sound = pygame.mixer.Sound("assets/bug_death.wav")
+
+    shoot_sound.set_volume(0.5)
+    bug_death_sound.set_volume(0.7)
+
     ''' hora de hacer el gameloop '''
     # variable booleana para manejar el loop
     running = True
@@ -70,7 +77,9 @@ def gameLoop():
     # loop principal del juego
 
     score = 0
-
+    pygame.mixer.music.load("assets/background_music.mp3")
+    pygame.mixer.music.set_volume(0.3)
+    pygame.mixer.music.play(-1)
     while running:
 
         screen.blit(background_image, [0, 0])
@@ -92,6 +101,8 @@ def gameLoop():
         
         # POR HACER (2.5): Eliminar bug si colisiona con proyectil
         collisions = pygame.sprite.groupcollide(player.projectiles, enemies, True, True)
+        if collisions:
+            bug_death_sound.play()
         score += 5 * len(collisions)
         pygame.sprite.groupcollide(player.projectiles, enemies, True, True)
         
@@ -129,6 +140,7 @@ def gameLoop():
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if time.time() - lastShoot > 1:
                     player.shoot(pygame.mouse.get_pos())
+                    shoot_sound.play()
                     lastShoot = time.time()
         
 
