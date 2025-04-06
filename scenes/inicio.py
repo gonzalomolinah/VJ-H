@@ -2,11 +2,11 @@ import pygame
 from pygame.locals import QUIT, MOUSEBUTTONDOWN
 
 def start_screen(screen, gameLoop):
+
     """
     Muestra la pantalla de inicio y permite iniciar el juego o salir.
     """
-    pygame.mouse.set_visible(True)
-    
+
     # Cargar imagen de fondo
     background_image = pygame.image.load("assets/foto_inicio.png").convert()
     background_image = pygame.transform.scale(background_image, (screen.get_width(), screen.get_height()))
@@ -24,6 +24,10 @@ def start_screen(screen, gameLoop):
     exit_rect = exit_text.get_rect(center=(screen.get_width() // 2 + spacing, base_y))
     
     running = True
+    pygame.mouse.set_visible(True)
+    pygame.mixer.music.load("assets/menu_music.wav")
+    pygame.mixer.music.set_volume(0.3)
+    pygame.mixer.music.play(-1)
     while running:
         screen.blit(background_image, (0, 0))
         mouse_pos = pygame.mouse.get_pos()
@@ -51,6 +55,7 @@ def start_screen(screen, gameLoop):
                 if start_rect.collidepoint(event.pos):
                     running = False
                     pygame.mouse.set_visible(False)
+                    pygame.mixer.music.stop()
                     gameLoop()  # Llamar a la función que inicia el juego
                 elif exit_rect.collidepoint(event.pos):
                     pygame.quit()
