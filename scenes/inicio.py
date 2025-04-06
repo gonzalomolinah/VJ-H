@@ -56,7 +56,8 @@ def start_screen(screen, gameLoop):
                     running = False
                     pygame.mouse.set_visible(False)
                     pygame.mixer.music.stop()
-                    gameLoop()  # Llamar a la función que inicia el juego
+                    score = gameLoop()  # Llamar a la función que inicia el juego
                 elif exit_rect.collidepoint(event.pos):
                     pygame.quit()
                     exit()
+    return score

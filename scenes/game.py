@@ -164,3 +164,4 @@ def gameLoop():
 
         score += 0.1
         clock.tick(40)
+    return score
