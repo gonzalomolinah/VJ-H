@@ -72,9 +72,13 @@ def gameLoop():
     ''' hora de hacer el gameloop '''
     # variable booleana para manejar el loop
     running = True
+    lives = 3
 
     lastShoot = time.time()
     # loop principal del juego
+    heart_img = pygame.image.load("assets/heart.png")
+    heart_img = pygame.transform.scale(heart_img, (30, 30))  # Escalar el tamaño del corazón
+
 
     score = 0
     pygame.mixer.music.load("assets/background_music.mp3")
@@ -83,6 +87,9 @@ def gameLoop():
     while running:
 
         screen.blit(background_image, [0, 0])
+
+        for i in range(lives):
+            screen.blit(heart_img, (SCREEN_WIDTH - 40 - i * 35, 10))  # Dibujar corazones en la esquina superior derecha
 
         
         cursor_img_rect.center = pygame.mouse.get_pos()  # update position 
@@ -112,7 +119,18 @@ def gameLoop():
         
         if pygame.sprite.spritecollideany(player, enemies):
             player.kill()
-            running = False
+            lives -= 1  # Reducir una vida
+            if lives > 0:
+                # Reiniciar jugador si aún tiene vidas
+                enemies.empty()
+                all_sprites = pygame.sprite.Group()  # Reiniciar all_sprites solo con el jugador
+                screen.blit(background_image, [0, 0])
+                pygame.display.flip()
+                player = Player(SCREEN_WIDTH, SCREEN_HEIGHT)
+                all_sprites.add(player)
+            else:
+                running = False  # Terminar el juego si no quedan vidas
+
         
 
         pygame.display.flip()
