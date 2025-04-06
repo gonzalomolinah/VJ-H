@@ -17,7 +17,7 @@ SCREEN_HEIGHT = 700
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 
 # Mostramos la pantalla de inicio antes de iniciar el juego
-start_screen(screen, GameScene.gameLoop)
+score = start_screen(screen, GameScene.gameLoop)
 
 # Si el juego termina, mostramos la pantalla de muerte
-dt.morido()
+dt.morido(score)
