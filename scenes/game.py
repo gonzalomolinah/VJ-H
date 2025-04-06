@@ -72,7 +72,7 @@ def gameLoop():
     ''' hora de hacer el gameloop '''
     # variable booleana para manejar el loop
     running = True
-    lives = 3
+    lives = 0
 
     lastShoot = time.time()
     # loop principal del juego
@@ -164,3 +164,4 @@ def gameLoop():
 
         score += 0.1
         clock.tick(40)
+    return score
