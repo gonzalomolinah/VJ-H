@@ -23,7 +23,6 @@ JorgePNG = pygame.image.load('assets/JorgeVJ.png')
 JorgePNG_scaled = pygame.transform.scale(JorgePNG, (80, 80))
 
 class Player(pygame.sprite.Sprite):
-    
     def __init__(self, SCREEN_WIDTH, SCREEN_HEIGHT):
         super(Player, self).__init__()
         self.surf = JorgePNG_scaled
@@ -32,26 +31,27 @@ class Player(pygame.sprite.Sprite):
         self.screen_width = SCREEN_WIDTH
         self.screen_height = SCREEN_HEIGHT
         self.derecha = True
+        self.speed = 5  # Velocidad predeterminada
         
         # POR HACER (2.3): Crear lista de proyectiles
         self.projectiles = pygame.sprite.Group()
 
-
     def update(self, pressed_keys):
+        # Usar self.speed para aplicar la velocidad del jugador
         if pressed_keys[pygame.K_w]:
-            self.rect.move_ip(0, -4)
+            self.rect.move_ip(0, -self.speed)
         if pressed_keys[pygame.K_s]:
-            self.rect.move_ip(0, 4)
+            self.rect.move_ip(0, self.speed)
         if pressed_keys[pygame.K_a]:
             if self.derecha:
                 self.surf = pygame.transform.flip(self.surf, True, False)
                 self.derecha = False
-            self.rect.move_ip(-4, 0)
+            self.rect.move_ip(-self.speed, 0)
         if pressed_keys[pygame.K_d]:
             if not self.derecha:
                 self.surf = pygame.transform.flip(self.surf, True, False)
                 self.derecha = True
-            self.rect.move_ip(4, 0)
+            self.rect.move_ip(self.speed, 0)
         
         if self.rect.left < 0:
             self.rect.left = 0
@@ -62,10 +62,10 @@ class Player(pygame.sprite.Sprite):
         if self.rect.bottom > self.screen_height:
             self.rect.bottom = self.screen_height
         
-        # POR HACER (2.3): Actualizar la posición de los proyectiles
+        # Actualizar la posición de los proyectiles
         self.projectiles.update()
 
-    
+
     def shoot(self, mouse_pos): 
         
         # POR HACER (2.3): Crear y calcular dirección proyectil
