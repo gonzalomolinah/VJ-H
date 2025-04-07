@@ -23,6 +23,7 @@ import time
 
 from scenes.pause import pause_screen
 
+from elements.powerup import PowerUp
 #from scenes.start import start_menu
 
 def gameLoop():
@@ -61,6 +62,18 @@ def gameLoop():
     enemies = pygame.sprite.Group()
     all_sprites = pygame.sprite.Group()
     all_sprites.add(player)
+
+    powerups = pygame.sprite.Group()
+    POWERUP_EVENT = pygame.USEREVENT + 2
+    pygame.time.set_timer(POWERUP_EVENT, 10000)
+    powerup_effects = {
+        'speed': False,
+        'shield': False
+    }
+    powerup_timers = {
+        'speed': 0,
+        'shield': 0
+    }
 
 
     shoot_sound = pygame.mixer.Sound("assets/shoot.wav")
@@ -101,7 +114,8 @@ def gameLoop():
         
         for entity in all_sprites:
             screen.blit(entity.surf, entity.rect)
-        
+        for powerup in powerups:
+            screen.blit(powerup.image, powerup.rect)
         # POR HACER (2.5): Pintar proyectiles en pantalla
         for projectile in player.projectiles:
             screen.blit(projectile.surf, projectile.rect)
@@ -114,23 +128,43 @@ def gameLoop():
         pygame.sprite.groupcollide(player.projectiles, enemies, True, True)
         
         pressed_keys = pygame.key.get_pressed()
-        player.update(pressed_keys)
-        enemies.update()
-        
-        if pygame.sprite.spritecollideany(player, enemies):
-            player.kill()
-            lives -= 1  # Reducir una vida
-            if lives > 0:
-                # Reiniciar jugador si aún tiene vidas
-                enemies.empty()
-                all_sprites = pygame.sprite.Group()  # Reiniciar all_sprites solo con el jugador
-                screen.blit(background_image, [0, 0])
-                pygame.display.flip()
-                player = Player(SCREEN_WIDTH, SCREEN_HEIGHT)
-                all_sprites.add(player)
-            else:
-                running = False  # Terminar el juego si no quedan vidas
+        collected = pygame.sprite.spritecollide(player, powerups, True)
+        for pu in collected:
+            powerup_effects[pu.type] = True
+            powerup_timers[pu.type] = time.time()
 
+        player.update(pressed_keys)
+        # Aplicar efectos
+        if powerup_effects['speed']:
+            if time.time() - powerup_timers['speed'] < 5:
+                player.speed = 10
+            else:
+                player.speed = 5
+                powerup_effects['speed'] = False
+        if powerup_effects['shield']:
+            if time.time() - powerup_timers['shield'] >= 5:
+                powerup_effects['shield'] = False
+
+        enemies.update()
+        powerups.update()
+        if pygame.sprite.spritecollideany(player, enemies):
+            if not powerup_effects['shield']:
+                player.kill()
+                lives -= 1  # Reducir una vida
+                if lives > 0:
+                    # Reiniciar jugador si aún tiene vidas
+                    enemies.empty()
+                    all_sprites = pygame.sprite.Group()  # Reiniciar all_sprites solo con el jugador
+                    player = Player(SCREEN_WIDTH, SCREEN_HEIGHT)
+                    all_sprites.add(player)
+                    screen.blit(background_image, [0, 0])
+                    pygame.display.flip()
+                else:
+                    running = False  # Terminar el juego si no quedan vidas
+            else:
+                for enemy in pygame.sprite.spritecollide(player, enemies, True):
+                    bug_death_sound.play()
+                    score += 5
         
 
         pygame.display.flip()
@@ -160,8 +194,14 @@ def gameLoop():
                     player.shoot(pygame.mouse.get_pos())
                     shoot_sound.play()
                     lastShoot = time.time()
-        
-
+            elif event.type == POWERUP_EVENT:
+                try:
+                    new_powerup = PowerUp(SCREEN_WIDTH, SCREEN_HEIGHT)
+                    powerups.add(new_powerup)
+                    all_sprites.add(new_powerup)
+                except Exception as e:
+                    print(f"Error al crear powerup: {e}")
         score += 0.1
         clock.tick(40)
+
     return score
